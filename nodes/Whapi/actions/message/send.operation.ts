@@ -69,7 +69,7 @@ const properties: INodeProperties[] = [
 		name: 'ephemeral',
 		type: 'number',
 		typeOptions: {
-			minValue: 1,
+			minValue: 0,
 			maxValue: 604800,
 		},
 		default: '',
