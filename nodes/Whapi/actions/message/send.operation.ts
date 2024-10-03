@@ -72,7 +72,7 @@ const properties: INodeProperties[] = [
 			minValue: 0,
 			maxValue: 604800,
 		},
-		default: '',
+		default: 0,
 		description: 'Time in seconds for the message to be deleted. The Disappearing messages setting should be enabled in the chat where you are sending this message.',
 	},
 	/*{
@@ -135,6 +135,8 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	const returnData: INodeExecutionData[] = [];
 	const type = this.getNodeParameter('messageType', 0)!.toString();
 	const endpoint = `messages//${getMethodEndpoint(type)}`;
+
+	if(!body.isEphemeral) delete body.ephemeral;
 
 
 	console.dir({body: body}, {depth: 10})
