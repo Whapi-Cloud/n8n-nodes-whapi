@@ -131,35 +131,37 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-	const body = (({ operation, messageType, authentication, ...o }) => o)(this.getExecuteData().node.parameters)
+	const body = (({operation, messageType, authentication, ...o}) => o)(this.getExecuteData().node.parameters)
 	const returnData: INodeExecutionData[] = [];
 	const type = this.getNodeParameter('messageType', 0)!.toString();
 	const endpoint = `messages//${getMethodEndpoint(type)}`;
 
-	if(!body.isEphemeral) delete body.ephemeral;
+	const processed: any = {};
+	let params = Object.keys(body)
+	for (let key of params) {
+		processed[key] = this.getNodeParameter(key, 0) as string
+	}
+	if (!processed.isEphemeral) delete processed.ephemeral;
 
+	try {
 
-	console.dir({body: body}, {depth: 10})
-		try {
+		let responseData = await apiRequest.call(this, 'POST', endpoint, processed, {},);
+		const executionData = this.helpers.constructExecutionMetaData(
+			this.helpers.returnJsonArray(responseData as IDataObject),
+			{itemData: {item: 0}},
+		);
 
-			let responseData = await apiRequest.call(this, 'POST', endpoint, body,{}, );
-			const executionData = this.helpers.constructExecutionMetaData(
-				this.helpers.returnJsonArray(responseData as IDataObject),
+		returnData.push(...executionData);
+	} catch (error) {
+		if (this.continueOnFail()) {
+			const executionErrorData = this.helpers.constructExecutionMetaData(
+				this.helpers.returnJsonArray({error: error.message}),
 				{itemData: {item: 0}},
 			);
-
-			returnData.push(...executionData);
-		} catch (error) {
-			if (this.continueOnFail()) {
-				const executionErrorData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray({error: error.message}),
-					{itemData: {item: 0}},
-				);
-				returnData.push(...executionErrorData);
-			}
-			throw error;
+			returnData.push(...executionErrorData);
 		}
-
+		throw error;
+	}
 
 
 	return [returnData];
