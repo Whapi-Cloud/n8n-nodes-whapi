@@ -1,4 +1,4 @@
-import type {
+import {
 	IDataObject,
 	IExecuteFunctions,
 	IPollFunctions,
@@ -48,7 +48,6 @@ export async function apiRequest(
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
 	try {
 		const response = await this.helpers.httpRequestWithAuthentication.call(this, authenticationMethod, options);
-
 		return response;
 	} catch (error) {
 		throw new ApplicationError(error.message);
@@ -92,8 +91,7 @@ export async function settingsRequest(
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
 	try {
 		const response = await this.helpers.requestWithAuthentication.call(this, authenticationMethod, options);
-
-		return response.body || {success: true};
+		return response;
 	} catch (error) {
 		throw new ApplicationError(error.message);
 	}

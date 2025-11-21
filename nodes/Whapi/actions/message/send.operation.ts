@@ -64,17 +64,6 @@ const properties: INodeProperties[] = [
 		default: 0,
 		description: 'Time in seconds to simulate typing',
 	},
-	{
-		displayName: 'Ephemeral',
-		name: 'ephemeral',
-		type: 'number',
-		typeOptions: {
-			minValue: 0,
-			maxValue: 604800,
-		},
-		default: 0,
-		description: 'Time in seconds for the message to be deleted. The Disappearing messages setting should be enabled in the chat where you are sending this message.',
-	},
 	/*{
 		displayName: 'Mentions',
 		name: 'to',
@@ -159,11 +148,11 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 				{itemData: {item: 0}},
 			);
 			returnData.push(...executionErrorData);
+		}else{
+			throw error;
 		}
-		throw error;
+
 	}
-
-
 	return [returnData];
 }
 

@@ -17,7 +17,7 @@ export class WhapiTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Whapi Trigger',
 		name: 'whapiTrigger',
-		icon: 'file:Whapi.svg',
+		icon: 'file:whapi.svg',
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["event"]}}',
@@ -104,7 +104,6 @@ export class WhapiTrigger implements INodeType {
 						(webhook: Webhook) => {
 							return webhook.url != webhookUrl
 						}).concat(newHook) || [newHook];
-
 
 					await settingsRequest.call(this, 'PATCH', settings);
 

@@ -53,8 +53,9 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			);
 			returnData.push(...executionErrorData);
 
+		}else{
+			throw error;
 		}
-		throw error;
 	}
 
 
