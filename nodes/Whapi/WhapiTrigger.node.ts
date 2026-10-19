@@ -8,7 +8,8 @@ import {
 } from 'n8n-workflow';
 
 
-import { WebhookEvent, Webhook, WebhookModeEnum} from './types';
+import { WHAPI_ICON } from './constants';
+import { WebhookEvent, Webhook, WebhookModeEnum, EventMethodEnum, EventTypeEnum} from './types';
 import {settingsRequest} from './transport';
 
 import {whapiTriggerDescription} from './trigger/WhapiTriggerDescription';
@@ -17,7 +18,7 @@ export class WhapiTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Whapi Trigger',
 		name: 'whapiTrigger',
-		icon: 'file:whapi.svg',
+		icon: WHAPI_ICON,
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["event"]}}',
@@ -66,74 +67,89 @@ export class WhapiTrigger implements INodeType {
 	webhookMethods = {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
-				const webhookUrl = this.getNodeWebhookUrl('default') as string;
+				const webhookUrl = this.getNodeWebhookUrl('default');
 				const settings = await settingsRequest.call(this, 'GET');
-				const webhooks = settings.webhooks && settings.webhooks.find(
-					(webhook) => webhook.url === webhookUrl
+				const existingWebhook = settings.webhooks?.find(
+					(webhook) => webhook.url === webhookUrl,
 				);
-				return !!webhooks;
 
+				if (!existingWebhook) {
+					return false;
+				}
+
+				const updates = this.getNodeParameter('updates', []) as EventTypeEnum[];
+				const eventMethods = [
+					EventMethodEnum.put,
+					EventMethodEnum.post,
+					EventMethodEnum.delete,
+					EventMethodEnum.patch,
+				];
+				const expectedEvents: WebhookEvent[] = updates.flatMap((type) =>
+					eventMethods.map((method) => ({ type, method })),
+				);
+				const existingEvents = existingWebhook.events ?? [];
+				const eventsMatch =
+					existingEvents.length === expectedEvents.length &&
+					expectedEvents.every((expectedEvent) =>
+						existingEvents.some(
+							(existingEvent) =>
+								existingEvent.type === expectedEvent.type &&
+								existingEvent.method === expectedEvent.method,
+						),
+					);
+				
+				return (
+					existingWebhook.mode === WebhookModeEnum.body &&
+					eventsMatch
+				);
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
-				try {
-					const settings = await settingsRequest.call(this, 'GET');
 
-					const updates = this.getNodeParameter('updates', []) as IDataObject[];
+				const settings = await settingsRequest.call(this, 'GET');
 
-					const eventMethods = [
-						'put', 'post', 'delete', 'patch'
-					]
+				const updates = this.getNodeParameter('updates', []) as IDataObject[];
 
-					let events = [];
-					for (let type of updates) {
-						for (let method of eventMethods) {
-							events.push({type, method} as
-								unknown as WebhookEvent
-							)
-						}
+				const eventMethods = [
+					'put', 'post', 'delete', 'patch'
+				]
+
+				let events = [];
+				for (let type of updates) {
+					for (let method of eventMethods) {
+						events.push({type, method} as
+							unknown as WebhookEvent
+						)
 					}
-
-					let newHook: Webhook = {
-						url: webhookUrl,
-						events,
-						mode: WebhookModeEnum.body
-					};
-
-					settings.webhooks = settings.webhooks && settings.webhooks.filter(
-						(webhook: Webhook) => {
-							return webhook.url != webhookUrl
-						}).concat(newHook) || [newHook];
-
-					await settingsRequest.call(this, 'PATCH', settings);
-
-					return true;
-				} catch (e) {
-					console.log(e)
 				}
-				return false;
 
+				let newHook: Webhook = {
+					url: webhookUrl,
+					events,
+					mode: WebhookModeEnum.body
+				};
+
+				settings.webhooks = settings.webhooks && settings.webhooks.filter(
+					(webhook: Webhook) => {
+						return webhook.url != webhookUrl
+					}).concat(newHook) || [newHook];
+
+				await settingsRequest.call(this, 'PATCH', settings);
+
+				return true;
 			},
 			async delete(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
-				try {
-					const settings = await settingsRequest.call(this, 'GET');
-					settings.webhooks = settings.webhooks && settings.webhooks.filter(
-						(webhook: Webhook) => {
-							return webhook.url != webhookUrl
-						}) || [];
 
-
-					await settingsRequest.call(this, 'PATCH', {
-						settings
-					});
-
-					return true;
-				} catch (e) {
-					console.log(e)
-				}
-				return false;
-
+				const settings = await settingsRequest.call(this, 'GET');
+			
+				settings.webhooks = settings.webhooks?.filter(
+					(webhook) => webhook.url !== webhookUrl,
+				) ?? [];
+			
+				await settingsRequest.call(this, 'PATCH', settings);
+			
+				return true;
 			},
 		},
 	};

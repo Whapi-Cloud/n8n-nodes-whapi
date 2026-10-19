@@ -1,11 +1,14 @@
-import type {
+import {
 
 	IDataObject,
 	IExecuteFunctions,
 	IDisplayOptions,
-	INodeProperties
+	INodeProperties,
+	INode,
+	NodeApiError,
+	JsonObject
 } from 'n8n-workflow';
-import { jsonParse, NodeOperationError } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 
 export function updateDisplayOptions(
@@ -41,24 +44,25 @@ export const createSimplifyFunction =
 			return result;
 		};
 
-export function parseError(this: IExecuteFunctions, error: any, itemIndex = 0) {
-	let errorData = error.cause.error;
-	const errorOptions: IDataObject = { itemIndex };
-
-	if (!errorData && error.description) {
-		try {
-			const errorString = (error.description as string).split(' - ')[1];
-			if (errorString) {
-				errorData = jsonParse(errorString);
-			}
-		} catch (err) {}
+export function parseError(
+	node: INode,
+	error: unknown,
+	itemIndex?: number,
+): NodeApiError | NodeOperationError {
+	if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+		return error;
 	}
 
-	if (errorData?.message) {
-		errorOptions.message = errorData.message;
-	}
+	const errorObject: JsonObject =
+		typeof error === 'object' && error !== null
+			? error as JsonObject
+			: { message: String(error) };
 
-	return new NodeOperationError(this.getNode(), errorData || error, errorOptions);
+	return new NodeApiError(
+		node,
+		errorObject,
+		itemIndex === undefined ? {} : { itemIndex },
+	);
 }
 
 export function prepareErrorData(this: IExecuteFunctions, error: any, i: number) {

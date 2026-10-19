@@ -11,7 +11,7 @@ import {
 import type {
 	Settings
 } from '../types';
-import {ApplicationError} from 'n8n-workflow';
+import { parseError } from '../helpers/utils';
 
 /**
  * Make an API request to Whapi
@@ -50,7 +50,7 @@ export async function apiRequest(
 		const response = await this.helpers.httpRequestWithAuthentication.call(this, authenticationMethod, options);
 		return response;
 	} catch (error) {
-		throw new ApplicationError(error.message);
+		throw parseError(this.getNode(), error);
 	}
 
 }
@@ -93,7 +93,7 @@ export async function settingsRequest(
 		const response = await this.helpers.requestWithAuthentication.call(this, authenticationMethod, options);
 		return response;
 	} catch (error) {
-		throw new ApplicationError(error.message);
+		throw parseError(this.getNode(), error);
 	}
 
 }

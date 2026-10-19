@@ -4,10 +4,10 @@
 	"codexVersion": "1.0",
 	"categories": ["Communication"],
 	"resources": {
-		"primaryDocumentation": [
-			{
-				"url": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger/"
-			}
-		]
+	  "primaryDocumentation": [
+		{
+		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi#operations"
+		}
+	  ]
 	}
 }

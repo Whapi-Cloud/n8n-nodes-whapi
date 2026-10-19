@@ -6,6 +6,8 @@ import type {
 } from 'n8n-workflow';
 import {
 	getMethodEndpoint,
+	parseError,
+	prepareErrorData,
 	updateDisplayOptions
 } from '../../helpers/utils';
 import {apiRequest} from '../../transport/whapi.api';
@@ -123,7 +125,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	const body = (({operation, messageType, authentication, ...o}) => o)(this.getExecuteData().node.parameters)
 	const returnData: INodeExecutionData[] = [];
 	const type = this.getNodeParameter('messageType', 0)!.toString();
-	const endpoint = `messages//${getMethodEndpoint(type)}`;
+	const endpoint = `messages/${getMethodEndpoint(type)}`;
 
 	const processed: any = {};
 	let params = Object.keys(body)
@@ -142,16 +144,15 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		returnData.push(...executionData);
 	} catch (error) {
-		if (this.continueOnFail()) {
-			const executionErrorData = this.helpers.constructExecutionMetaData(
-				this.helpers.returnJsonArray({error: error.message}),
-				{itemData: {item: 0}},
-			);
-			returnData.push(...executionErrorData);
-		}else{
-			throw error;
-		}
+		const parsedError = parseError(this.getNode(), error, 0);
 
+		if (this.continueOnFail()) {
+			returnData.push(
+				...prepareErrorData.call(this, parsedError, 0),
+			);
+		} else {
+			throw parsedError;
+		}
 	}
 	return [returnData];
 }

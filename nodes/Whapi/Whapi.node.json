@@ -4,15 +4,15 @@
 	"codexVersion": "1.0",
 	"categories": ["Communication"],
 	"resources": {
-		"credentialDocumentation": [
-			{
-				"url": "https://whapi.readme.io/"
-			}
-		],
-		"primaryDocumentation": [
-			{
-				"url": "https://whapi.readme.io/"
-			}
-		]
+	  "credentialDocumentation": [
+		{
+		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi#credentials"
+		}
+	  ],
+	  "primaryDocumentation": [
+		{
+		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi"
+		}
+	  ]
 	}
 }

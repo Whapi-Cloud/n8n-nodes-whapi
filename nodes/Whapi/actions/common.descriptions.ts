@@ -1,21 +1,22 @@
 /* eslint-disable n8n-nodes-base/node-filename-against-convention */
-import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
+import type { INodeTypeDescription } from 'n8n-workflow';
 
+import { WHAPI_ICON } from '../constants';
 import * as message from './message/Message.resource';
 import * as contact from './contact/Contact.resource';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'whapi',
+	displayName: 'Whapi',
 	name: 'whapi',
-	icon: 'file:whapi.svg',
+	icon: WHAPI_ICON,
 	group: ['input'],
 	version: [1],
 	subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 	description: 'Use whapi channel services',
 	defaults: {
-		name: 'whapi',
+		name: 'Whapi',
 	},
-	inputs: [NodeConnectionType.Main],
+	inputs: ['main'],
 	outputs: ['main'],
 	credentials: [
 		{

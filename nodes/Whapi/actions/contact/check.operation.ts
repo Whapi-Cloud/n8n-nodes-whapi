@@ -5,6 +5,8 @@ import type {
 	IExecuteFunctions,
 } from 'n8n-workflow';
 import {
+	parseError,
+	prepareErrorData,
 	updateDisplayOptions
 } from '../../helpers/utils';
 import {apiRequest} from '../../transport';
@@ -31,14 +33,13 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-	const endpoint = `contacts/`;
+	const endpoint = `contacts`;
 	const contact = this.getNodeParameter('contact', 0);
 	const returnData: INodeExecutionData[] = [];
 
 
 	try {
 		let responseData = await apiRequest.call(this, 'POST', endpoint, {blocking: 'wait', contacts:[contact]});
-		console.log({responseData})
 		const executionData = this.helpers.constructExecutionMetaData(
 			this.helpers.returnJsonArray(responseData as IDataObject),
 			{itemData: {item: 0}},
@@ -46,15 +47,14 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		returnData.push(...executionData);
 	} catch (error) {
-		if (this.continueOnFail()) {
-			const executionErrorData = this.helpers.constructExecutionMetaData(
-				this.helpers.returnJsonArray({error: error.message}),
-				{itemData: {item: 0}},
-			);
-			returnData.push(...executionErrorData);
+		const parsedError = parseError(this.getNode(), error, 0);
 
-		}else{
-			throw error;
+		if (this.continueOnFail()) {
+			returnData.push(
+				...prepareErrorData.call(this, parsedError, 0),
+			);
+		} else {
+			throw parsedError;
 		}
 	}
 
