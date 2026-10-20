@@ -21,7 +21,7 @@ export class WhapiTrigger implements INodeType {
 		icon: WHAPI_ICON,
 		group: ['trigger'],
 		version: 1,
-		subtitle: '={{$parameter["event"]}}',
+		subtitle: '={{$parameter["updates"].length ? $parameter["updates"].join(", ") : "events"}}',
 		description: 'Handle Whapi events via webhooks',
 		defaults: {
 			name: 'Whapi Trigger',

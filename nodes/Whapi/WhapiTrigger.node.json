@@ -4,9 +4,14 @@
 	"codexVersion": "1.0",
 	"categories": ["Communication"],
 	"resources": {
+	  "credentialDocumentation": [
+		{
+		  "url": "https://whapi.cloud/docs"
+		}
+	  ],
 	  "primaryDocumentation": [
 		{
-		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi#operations"
+		  "url": "https://support.whapi.cloud/help-desk/receiving/webhooks/incoming-webhooks-format"
 		}
 	  ]
 	}

@@ -61,6 +61,8 @@ And events:
 
 Action node for your Whapi channel API (`https://gate.whapi.cloud`).
 
+In the n8n node panel, each **Resource / Operation** shows contextual links to the [Whapi Help Desk](https://support.whapi.cloud/help-desk). The node **Documentation** button opens the [API reference](https://whapi.cloud/docs). **Whapi Trigger** opens [incoming webhooks format](https://support.whapi.cloud/help-desk/receiving/webhooks/incoming-webhooks-format) and adds extra links when you select Messages or Groups events.
+
 | Resource | Operation | Description |
 |----------|-----------|-------------|
 | Message | Send | Send text, image, video, audio, document, or contact to a phone number or chat ID |

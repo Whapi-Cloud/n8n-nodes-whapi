@@ -6,12 +6,12 @@
 	"resources": {
 	  "credentialDocumentation": [
 		{
-		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi#credentials"
+		  "url": "https://whapi.cloud/docs"
 		}
 	  ],
 	  "primaryDocumentation": [
 		{
-		  "url": "https://github.com/Whapi-Cloud/n8n-nodes-whapi"
+		  "url": "https://whapi.cloud/docs"
 		}
 	  ]
 	}

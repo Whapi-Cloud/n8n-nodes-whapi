@@ -8,7 +8,7 @@ import {
 export class WhapiChannelApi implements ICredentialType {
 	name = 'whapiChannelApi';
 	displayName = 'Whapi API';
-	documentationUrl = 'https://whapi.readme.io/';
+	documentationUrl = 'https://whapi.cloud/docs';
 
 	properties: INodeProperties[] = [
 		{
@@ -18,14 +18,18 @@ export class WhapiChannelApi implements ICredentialType {
 			name: 'channelApi',
 			default: '',
 			required: true,
+			description:
+				'Channel token from <a href="https://panel.whapi.cloud/" target="_blank">Whapi Panel</a>. See the <a href="https://whapi.cloud/docs" target="_blank">API documentation</a> for authorization.',
 		},
 		{
 			displayName: 'Channel ID',
 			type: 'string',
 			name: 'channelId',
 			default: '',
-			required: false
-		}
+			required: false,
+			description:
+				'Optional. Channel ID from the channel URL: panel.whapi.cloud/channels/{channel-id}',
+		},
 	];
 
 	// This allows the credential to be used by other parts of n8n
