@@ -1,12 +1,13 @@
-# Publish n8n-nodes-whapi to npm with provenance (required for n8n Creator Portal verification).
+# Publish n8n-nodes-whapi to npm with provenance (n8n Creator Portal requirement).
 #
-# One-time setup (pick one):
-# A) npm → package Settings → Trusted Publishers → GitHub Actions
-#    owner: Whapi-Cloud, repo: n8n-nodes-whapi, workflow filename: publish.yml
-#    Do NOT set NPM_TOKEN in GitHub (OIDC is used).
-# B) Create NPM_TOKEN secret in GitHub (granular token, publish write for this package).
+# npm Trusted Publisher (recommended):
+#   Package Settings → Trusted publishing → GitHub Actions
+#   Whapi-Cloud / n8n-nodes-whapi / workflow file: publish.yml
+#   Enable "Allow npm publish" (not only "npm stage publish").
 #
-# Release: bump version in package.json, push main, then: git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z
+# Do NOT set NPM_TOKEN unless you use token fallback instead of OIDC.
+#
+# Release: bump version → push main → git tag -a vX.Y.Z && git push origin vX.Y.Z
 
 name: Publish to npm
 
@@ -27,10 +28,13 @@ jobs:
 
       - uses: pnpm/action-setup@v4
 
+      # No registry-url here — it injects NODE_AUTH_TOKEN (often GITHUB_TOKEN) and breaks npm OIDC.
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
+
+      - name: Ensure npm supports trusted publishing (OIDC)
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: pnpm install --ignore-scripts
@@ -42,6 +46,8 @@ jobs:
         run: |
           if [ -n "$NPM_TOKEN" ]; then
             npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          else
+            npm config delete //registry.npmjs.org/:_authToken || true
           fi
           npm publish --provenance --access public
         env:
