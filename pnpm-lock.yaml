@@ -7,17 +7,7 @@ settings:
 importers:
 
   .:
-    dependencies:
-      mime-types:
-        specifier: ^2.1.35
-        version: 2.1.35
-      typescript:
-        specifier: '5.5'
-        version: 5.5.4
     devDependencies:
-      '@types/mime-types':
-        specifier: ^2.1.4
-        version: 2.1.4
       '@typescript-eslint/parser':
         specifier: ^7.18.0
         version: 7.18.0(eslint@8.57.1)(typescript@5.5.4)
@@ -36,6 +26,9 @@ importers:
       prettier:
         specifier: ^3.3.2
         version: 3.9.10
+      typescript:
+        specifier: '5.5'
+        version: 5.5.4
 
 packages:
 
@@ -94,9 +87,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@types/mime-types@2.1.4':
-    resolution: {integrity: sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==}
 
   '@typescript-eslint/parser@7.18.0':
     resolution: {integrity: sha512-4Z+L8I2OqhZV8qA132M4wNL30ypZGYOQVBfMgxDH/K5UX0PNqTu1c6za9ST5r9+tavvHiTWmBnKzpCJ/GlVFtg==}
@@ -2074,8 +2064,6 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.3
-
-  '@types/mime-types@2.1.4': {}
 
   '@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.5.4)':
     dependencies:
