@@ -4,7 +4,8 @@ import {
 	type INodeType,
 	type INodeTypeDescription,
 	type IWebhookFunctions,
-	type IWebhookResponseData
+	type IWebhookResponseData,
+	NodeConnectionTypes,
 } from 'n8n-workflow';
 
 
@@ -27,7 +28,7 @@ export class WhapiTrigger implements INodeType {
 			name: 'Whapi Trigger',
 		},
 		inputs: [],
-		outputs: ['main'],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'whapiChannelApi',

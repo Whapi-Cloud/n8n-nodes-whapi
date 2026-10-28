@@ -1,6 +1,7 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import type { WhapiType } from './node.type';
+import { parseError } from '../helpers/utils';
 
 import * as message from './message/Message.resource';
 import * as contact from './contact/Contact.resource';
@@ -31,13 +32,14 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				);
 		}
 	} catch (error) {
+		const nodeError = parseError(this.getNode(), error);
 		if (
-			error.description &&
-			(error.description as string).includes('cannot accept the provided value')
+			nodeError.description &&
+			String(nodeError.description).includes('cannot accept the provided value')
 		) {
-			error.description = `${error.description}. Consider using 'Typecast' option`;
+			nodeError.description = `${nodeError.description}. Consider using 'Typecast' option`;
 		}
-		throw error;
+		throw nodeError;
 	}
 
 	return returnData;

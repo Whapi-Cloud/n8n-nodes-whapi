@@ -4,13 +4,11 @@ import {
 	IPollFunctions,
 	ILoadOptionsFunctions,
 	IHttpRequestMethods,
-	IRequestOptions, IHookFunctions, IWebhookFunctions,
-	IHttpRequestOptions
-}
-	from 'n8n-workflow';
-import type {
-	Settings
-} from '../types';
+	IHookFunctions,
+	IWebhookFunctions,
+	IHttpRequestOptions,
+} from 'n8n-workflow';
+import type { Settings } from '../types';
 import { parseError } from '../helpers/utils';
 
 /**
@@ -47,36 +45,41 @@ export async function apiRequest(
 
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
 	try {
-		const response = await this.helpers.httpRequestWithAuthentication.call(this, authenticationMethod, options);
+		const response = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			authenticationMethod,
+			options,
+		);
 		return response;
 	} catch (error) {
 		throw parseError(this.getNode(), error);
 	}
-
 }
 
-
 /**
- * Make an API request to Whapi
- *
+ * Make an API request to Whapi settings (webhooks)
  */
 export async function settingsRequest(
-	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions | IPollFunctions,
+	this:
+		| IHookFunctions
+		| IExecuteFunctions
+		| ILoadOptionsFunctions
+		| IWebhookFunctions
+		| IPollFunctions,
 	method: IHttpRequestMethods,
 	body: IDataObject = {},
 	query?: IDataObject,
-	uri?: string,
+	url?: string,
 	option: IDataObject = {},
-):Promise<Settings> {
+): Promise<Settings> {
 	query = query || {};
 
-	const options: IRequestOptions = {
+	const options: IHttpRequestOptions = {
 		headers: {},
 		method,
 		body,
 		qs: query,
-		uri: uri || `https://gate.whapi.cloud/settings`,
-		useQuerystring: false,
+		url: url || 'https://gate.whapi.cloud/settings',
 		json: true,
 	};
 
@@ -90,10 +93,13 @@ export async function settingsRequest(
 
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
 	try {
-		const response = await this.helpers.requestWithAuthentication.call(this, authenticationMethod, options);
+		const response = await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			authenticationMethod,
+			options,
+		);
 		return response;
 	} catch (error) {
 		throw parseError(this.getNode(), error);
 	}
-
 }

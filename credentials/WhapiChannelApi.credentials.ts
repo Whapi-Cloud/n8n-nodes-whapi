@@ -3,12 +3,14 @@ import {
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
+	type Icon,
 } from 'n8n-workflow';
 
 export class WhapiChannelApi implements ICredentialType {
 	name = 'whapiChannelApi';
 	displayName = 'Whapi API';
 	documentationUrl = 'https://whapi.cloud/docs';
+	icon: Icon = 'file:whapi.svg';
 
 	properties: INodeProperties[] = [
 		{

@@ -6,6 +6,7 @@
     "n8n-community-node-package"
   ],
   "license": "MIT",
+  "homepage": "https://github.com/Whapi-Cloud/n8n-nodes-whapi#readme",
   "author": {
     "name": "Whapi",
     "email": "care@whapi.cloud"
@@ -42,19 +43,15 @@
     ]
   },
   "devDependencies": {
-    "@types/mime-types": "^2.1.4",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
     "eslint-plugin-n8n-nodes-base": "^1.16.7",
     "gulp": "^4.0.2",
     "n8n-workflow": "*",
-    "prettier": "^3.3.2"
+    "prettier": "^3.3.2",
+    "typescript": "5.5"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
-  },
-  "dependencies": {
-    "mime-types": "^2.1.35",
-    "typescript": "5.5"
   }
 }

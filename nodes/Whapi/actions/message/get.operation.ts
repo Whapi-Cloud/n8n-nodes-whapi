@@ -5,7 +5,8 @@ import type {
 	IExecuteFunctions,
 } from 'n8n-workflow';
 import {
-	updateDisplayOptions
+	updateDisplayOptions,
+	parseError,
 } from '../../helpers/utils';
 import {apiRequest} from '../../transport';
 
@@ -44,17 +45,17 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		returnData.push(...executionData);
 	} catch (error) {
+		const parsedError = parseError(this.getNode(), error, 0);
+
 		if (this.continueOnFail()) {
 			const executionErrorData = this.helpers.constructExecutionMetaData(
-				this.helpers.returnJsonArray({error: error.message}),
-				{itemData: {item: 0}},
+				this.helpers.returnJsonArray({ error: parsedError.message }),
+				{ itemData: { item: 0 } },
 			);
 			returnData.push(...executionErrorData);
-
-		}else{
-			throw error;
+		} else {
+			throw parsedError;
 		}
-
 	}
 
 
