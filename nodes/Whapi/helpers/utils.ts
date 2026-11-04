@@ -70,7 +70,9 @@ export function prepareErrorData(this: IExecuteFunctions, error: any, i: number)
 
 	try {
 		description = JSON.parse(error.description as string);
-	} catch (err) {}
+	} catch {
+		// description is not JSON; keep the raw value
+	}
 
 	return this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray({ error: error.message, description }),

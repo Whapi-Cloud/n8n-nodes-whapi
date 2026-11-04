@@ -7,9 +7,9 @@ import type {
 import {
 	parseError,
 	prepareErrorData,
-	updateDisplayOptions
+	updateDisplayOptions,
 } from '../../helpers/utils';
-import {apiRequest} from '../../transport';
+import { apiRequest } from '../../transport';
 
 const properties: INodeProperties[] = [
 	{
@@ -19,7 +19,7 @@ const properties: INodeProperties[] = [
 		required: true,
 		default: '',
 		description: 'Phone number to check',
-	}
+	},
 ];
 
 const displayOptions = {
@@ -29,36 +29,37 @@ const displayOptions = {
 	},
 };
 
-
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-	const endpoint = `contacts`;
-	const contact = this.getNodeParameter('contact', 0);
+	const items = this.getInputData();
 	const returnData: INodeExecutionData[] = [];
+	const endpoint = 'contacts';
 
+	for (let i = 0; i < items.length; i++) {
+		try {
+			const contact = this.getNodeParameter('contact', i);
 
-	try {
-		let responseData = await apiRequest.call(this, 'POST', endpoint, {blocking: 'wait', contacts:[contact]});
-		const executionData = this.helpers.constructExecutionMetaData(
-			this.helpers.returnJsonArray(responseData as IDataObject),
-			{itemData: {item: 0}},
-		);
-
-		returnData.push(...executionData);
-	} catch (error) {
-		const parsedError = parseError(this.getNode(), error, 0);
-
-		if (this.continueOnFail()) {
-			returnData.push(
-				...prepareErrorData.call(this, parsedError, 0),
+			const responseData = await apiRequest.call(this, 'POST', endpoint, {
+				blocking: 'wait',
+				contacts: [contact],
+			});
+			const executionData = this.helpers.constructExecutionMetaData(
+				this.helpers.returnJsonArray(responseData as IDataObject),
+				{ itemData: { item: i } },
 			);
-		} else {
-			throw parsedError;
+
+			returnData.push(...executionData);
+		} catch (error) {
+			const parsedError = parseError(this.getNode(), error, i);
+
+			if (this.continueOnFail()) {
+				returnData.push(...prepareErrorData.call(this, parsedError, i));
+			} else {
+				throw parsedError;
+			}
 		}
 	}
 
-
 	return [returnData];
 }
-

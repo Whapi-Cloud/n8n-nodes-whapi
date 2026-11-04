@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { WHAPI_DOC_URLS, docNotice } from '../../helpers/documentation';
+import { WHAPI_DOC_URLS } from '../../helpers/documentation';
 import * as get from './get.operation';
 import * as send from './send.operation';
 
@@ -16,13 +16,23 @@ export const description: INodeProperties[] = [
 			{
 				name: 'Get Message',
 				value: 'get',
-				description: 'Get the message by ID',
+				description:
+					'Get the message by ID. See <a href="' +
+					WHAPI_DOC_URLS.getMessage +
+					'" target="_blank">retrieve chat history</a> and <a href="' +
+					WHAPI_DOC_URLS.messageResync +
+					'" target="_blank">resync missing messages</a>.',
 				action: 'Get the message',
 			},
 			{
 				name: 'Send Message',
 				value: 'send',
-				description: 'Send message to any chat',
+				description:
+					'Send message to any chat. See <a href="' +
+					WHAPI_DOC_URLS.sending +
+					'" target="_blank">sending messages</a> and <a href="' +
+					WHAPI_DOC_URLS.sendingMedia +
+					'" target="_blank">media messages</a>.',
 				action: 'Send the message',
 			},
 		],
@@ -33,30 +43,6 @@ export const description: INodeProperties[] = [
 			},
 		},
 	},
-	docNotice(
-		'sendDocsNotice',
-		`Documentation: <a href="${WHAPI_DOC_URLS.sending}" target="_blank">Sending messages</a> · ` +
-			`<a href="${WHAPI_DOC_URLS.sendingMedia}" target="_blank">Media messages</a> · ` +
-			`<a href="${WHAPI_DOC_URLS.apiReference}" target="_blank">API reference</a>`,
-		{
-			show: {
-				resource: ['message'],
-				operation: ['send'],
-			},
-		},
-	),
-	docNotice(
-		'getDocsNotice',
-		`Documentation: <a href="${WHAPI_DOC_URLS.getMessage}" target="_blank">Get message / chat history</a> · ` +
-			`<a href="${WHAPI_DOC_URLS.messageResync}" target="_blank">Resync missing messages</a> · ` +
-			`<a href="${WHAPI_DOC_URLS.apiReference}" target="_blank">API reference</a>`,
-		{
-			show: {
-				resource: ['message'],
-				operation: ['get'],
-			},
-		},
-	),
 	...get.description,
 	...send.description,
 ];

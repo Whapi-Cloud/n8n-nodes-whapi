@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { WHAPI_DOC_URLS, docNotice } from '../../helpers/documentation';
+import { WHAPI_DOC_URLS } from '../../helpers/documentation';
 import * as check from './check.operation';
 
 export { check };
@@ -15,7 +15,10 @@ export const description: INodeProperties[] = [
 			{
 				name: 'Check Contact',
 				value: 'check',
-				description: 'Check phone number',
+				description:
+					'Check whether a phone number is registered on WhatsApp. See <a href="' +
+					WHAPI_DOC_URLS.checkContact +
+					'" target="_blank">check if a number has WhatsApp</a>.',
 				action: 'Check contact',
 			},
 		],
@@ -26,16 +29,5 @@ export const description: INodeProperties[] = [
 			},
 		},
 	},
-	docNotice(
-		'checkDocsNotice',
-		`Documentation: <a href="${WHAPI_DOC_URLS.checkContact}" target="_blank">Check if a number has WhatsApp</a> · ` +
-			`<a href="${WHAPI_DOC_URLS.apiReference}" target="_blank">API reference</a>`,
-		{
-			show: {
-				resource: ['contact'],
-				operation: ['check'],
-			},
-		},
-	),
 	...check.description,
 ];

@@ -1,5 +1,3 @@
-import type { INodeProperties } from 'n8n-workflow';
-
 /** Official Whapi documentation URLs used in node UI and codex. */
 export const WHAPI_DOC_URLS = {
 	apiReference: 'https://whapi.cloud/docs',
@@ -20,18 +18,3 @@ export const WHAPI_DOC_URLS = {
 		'https://support.whapi.cloud/help-desk/receiving/webhooks/incoming-webhooks-format/groups',
 	panelChannels: 'https://panel.whapi.cloud/',
 } as const;
-
-/** Renders a non-blocking documentation hint in the node parameter panel. */
-export function docNotice(
-	name: string,
-	html: string,
-	displayOptions?: INodeProperties['displayOptions'],
-): INodeProperties {
-	return {
-		displayName: html,
-		name,
-		type: 'notice',
-		default: '',
-		...(displayOptions ? { displayOptions } : {}),
-	};
-}

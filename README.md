@@ -61,7 +61,7 @@ And events:
 
 Action node for your Whapi channel API (`https://gate.whapi.cloud`).
 
-In the n8n node panel, each **Resource / Operation** shows contextual links to the [Whapi Help Desk](https://support.whapi.cloud/help-desk). The node **Documentation** button opens the [API reference](https://whapi.cloud/docs). **Whapi Trigger** opens [incoming webhooks format](https://support.whapi.cloud/help-desk/receiving/webhooks/incoming-webhooks-format) and adds extra links when you select Messages or Groups events.
+In the n8n node panel, each **Resource / Operation** includes links in the operation description. The node **Documentation** button opens the [API reference](https://whapi.cloud/docs). **Whapi Trigger** links to the [incoming webhooks format](https://support.whapi.cloud/help-desk/receiving/webhooks/incoming-webhooks-format) in the **Trigger On** field and in each event option.
 
 | Resource | Operation | Description |
 |----------|-----------|-------------|
@@ -75,10 +75,9 @@ In the n8n node panel, each **Resource / Operation** shows contextual links to t
 |-----------|-------------|
 | **Recipient** | Phone number (e.g. `447911123456`) or group/channel **Chat ID**. Chat IDs from a webhook payload can be reused in expressions (e.g. `{{ $json.chat_id }}` — field names depend on the Whapi webhook body). |
 | **Message Type** | `text`, `image`, `video`, `audio`, `document`, `contact` |
-| **Typing Time** | Seconds to simulate typing before send (0–60) |
-| **Body** | Text for `text` and `contact` types |
-| **Media String** | URL, media ID, or base64 for media types |
-| **Caption** | Caption for image, video, document, contact |
+| **Body** | Text for `text` and `contact` types (required when visible) |
+| **Media String** | URL, media ID, or base64 for media types (required when visible) |
+| **Additional Fields** | Optional **Typing Time** (0–60 seconds) and **Caption** for media |
 
 Use expressions from earlier nodes for **Recipient**, **Body**, and media fields. The API response is returned as the output item.
 

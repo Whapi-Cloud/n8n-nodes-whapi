@@ -8,9 +8,9 @@ import {
 	getMethodEndpoint,
 	parseError,
 	prepareErrorData,
-	updateDisplayOptions
+	updateDisplayOptions,
 } from '../../helpers/utils';
-import {apiRequest} from '../../transport/whapi.api';
+import { apiRequest } from '../../transport/whapi.api';
 
 const properties: INodeProperties[] = [
 	{
@@ -19,7 +19,8 @@ const properties: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		description: 'Use the phone number or Chat ID of the contact/group/channel to which you want to send the message. Use Get groups to get the group ID.',
+		description:
+			'Use the phone number or Chat ID of the contact/group/channel to which you want to send the message. Use Get groups to get the group ID.',
 	},
 	{
 		displayName: 'Message Type',
@@ -49,38 +50,21 @@ const properties: INodeProperties[] = [
 			{
 				name: 'Video',
 				value: 'video',
-			}
+			},
 		],
 		default: 'text',
 		required: true,
-		description: 'Type of the message'
+		description: 'Type of the message',
 	},
-	{
-		displayName: 'Typing Time',
-		name: 'typing_time',
-		type: 'number',
-		typeOptions: {
-			minValue: 0,
-			maxValue: 60,
-		},
-		default: 0,
-		description: 'Time in seconds to simulate typing',
-	},
-	/*{
-		displayName: 'Mentions',
-		name: 'to',
-		type: 'collection',
-		default: [],
-		description: 'Use the phone numbers of the mentioned users',
-	},*/
 	{
 		displayName: 'Body',
 		name: 'body',
 		type: 'string',
+		required: true,
 		displayOptions: {
 			hide: {
-				messageType: ['video', 'document', 'image', 'audio']
-			}
+				messageType: ['video', 'document', 'image', 'audio'],
+			},
 		},
 		default: '',
 		description: 'Message text',
@@ -89,26 +73,48 @@ const properties: INodeProperties[] = [
 		displayName: 'Media String',
 		name: 'media',
 		type: 'string',
+		required: true,
 		displayOptions: {
 			hide: {
-				messageType: ['text']
+				messageType: ['text'],
 			},
 		},
 		default: '',
-		description: 'String representation of media. It can be URL to source, media ID of previously uploaded media file or base-64 string.',
+		description:
+			'String representation of media. It can be URL to source, media ID of previously uploaded media file or base-64 string.',
 	},
 	{
-		displayName: 'Caption',
-		name: 'caption',
-		type: 'string',
-		displayOptions: {
-			hide: {
-				messageType: ['text', 'audio']
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		options: [
+			{
+				displayName: 'Typing Time',
+				name: 'typing_time',
+				type: 'number',
+				typeOptions: {
+					minValue: 0,
+					maxValue: 60,
+				},
+				default: 0,
+				description: 'Time in seconds to simulate typing',
 			},
-		},
-		default: '',
-		description: 'Caption for media file',
-	}
+			{
+				displayName: 'Caption',
+				name: 'caption',
+				type: 'string',
+				default: '',
+				description: 'Caption for media file',
+				displayOptions: {
+					hide: {
+						'/messageType': ['text', 'audio'],
+					},
+				},
+			},
+		],
+	},
 ];
 
 const displayOptions = {
@@ -118,42 +124,56 @@ const displayOptions = {
 	},
 };
 
-
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-	const body = (({operation, messageType, authentication, ...o}) => o)(this.getExecuteData().node.parameters)
+	const items = this.getInputData();
 	const returnData: INodeExecutionData[] = [];
-	const type = this.getNodeParameter('messageType', 0)!.toString();
-	const endpoint = `messages/${getMethodEndpoint(type)}`;
 
-	const processed: any = {};
-	let params = Object.keys(body)
-	for (let key of params) {
-		processed[key] = this.getNodeParameter(key, 0) as string
-	}
-	if (!processed.isEphemeral) delete processed.ephemeral;
+	for (let i = 0; i < items.length; i++) {
+		try {
+			const messageType = this.getNodeParameter('messageType', i) as string;
+			const endpoint = `messages/${getMethodEndpoint(messageType)}`;
+			const additionalFields = this.getNodeParameter('additionalFields', i, {}) as IDataObject;
 
-	try {
+			const processed: IDataObject = {
+				to: this.getNodeParameter('to', i),
+			};
 
-		let responseData = await apiRequest.call(this, 'POST', endpoint, processed, {},);
-		const executionData = this.helpers.constructExecutionMetaData(
-			this.helpers.returnJsonArray(responseData as IDataObject),
-			{itemData: {item: 0}},
-		);
+			const body = this.getNodeParameter('body', i, '') as string;
+			if (body !== '') {
+				processed.body = body;
+			}
 
-		returnData.push(...executionData);
-	} catch (error) {
-		const parsedError = parseError(this.getNode(), error, 0);
+			const media = this.getNodeParameter('media', i, '') as string;
+			if (media !== '') {
+				processed.media = media;
+			}
 
-		if (this.continueOnFail()) {
-			returnData.push(
-				...prepareErrorData.call(this, parsedError, 0),
+			if (additionalFields.typing_time !== undefined && additionalFields.typing_time !== '') {
+				processed.typing_time = additionalFields.typing_time;
+			}
+			if (additionalFields.caption) {
+				processed.caption = additionalFields.caption;
+			}
+
+			const responseData = await apiRequest.call(this, 'POST', endpoint, processed);
+			const executionData = this.helpers.constructExecutionMetaData(
+				this.helpers.returnJsonArray(responseData as IDataObject),
+				{ itemData: { item: i } },
 			);
-		} else {
-			throw parsedError;
+
+			returnData.push(...executionData);
+		} catch (error) {
+			const parsedError = parseError(this.getNode(), error, i);
+
+			if (this.continueOnFail()) {
+				returnData.push(...prepareErrorData.call(this, parsedError, i));
+			} else {
+				throw parsedError;
+			}
 		}
 	}
+
 	return [returnData];
 }
-
