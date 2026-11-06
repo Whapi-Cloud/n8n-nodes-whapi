@@ -37,7 +37,7 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 			nodeError.description &&
 			String(nodeError.description).includes('cannot accept the provided value')
 		) {
-			nodeError.description = `${nodeError.description}. Consider using 'Typecast' option`;
+			nodeError.description = `${nodeError.description}. Check values match the Whapi API (recipient/chat ID, message ID, media URL or payload) and that expressions resolve to strings or numbers as required.`;
 		}
 		throw nodeError;
 	}
