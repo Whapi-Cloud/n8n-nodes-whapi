@@ -68,6 +68,13 @@ In the n8n node panel, each **Resource / Operation** includes links in the opera
 |----------|-----------|-------------|
 | Message | Send | Send text, image, video, audio, document, or contact to a phone number or chat ID |
 | Message | Get | Retrieve a message by ID |
+| Contact | Get Contacts | List address book contacts (`GET /contacts`) |
+| Contact | Get Contact | Get one contact by ID (`GET /contacts/{ContactID}`) |
+| Contact | Add Contact | Add or update a contact (`PUT /contacts`) |
+| Contact | Edit Contact | Change contact name (`PATCH /contacts/{ContactID}`) |
+| Contact | Delete Contact | Remove from address book (`DELETE /contacts/{ContactID}`) |
+| Contact | Get LID by ID | Resolve LID for a user ID (`GET /contacts/lids/{ContactID}`) |
+| Contact | Get Phone Number by LID | Resolve ID from LID (`GET /contacts/ids/{ContactLID}`) |
 | Contact | Check | Check whether a phone number is registered on WhatsApp |
 | Custom API Call | Custom API Call | Authenticated HTTP request to a Whapi gate path (see [API reference](https://whapi.cloud/docs)) |
 
@@ -98,11 +105,18 @@ Use expressions from earlier nodes for **Recipient**, **Body**, and media fields
 |-----------|-------------|
 | **Message ID** | ID of the message to fetch |
 
-#### Contact → Check
+#### Contact operations
 
-| Parameter | Description |
-|-----------|-------------|
-| **Contact** | Phone number to check (e.g. `447911123456`) |
+| Operation | Main parameters |
+|-----------|-----------------|
+| **Get Contacts** | Optional **Count** (1–500), **Offset** |
+| **Get Contact** | **Contact ID** (phone or `@s.whatsapp.net` / `@lid`) |
+| **Add Contact** | **Phone**, **Name** |
+| **Edit Contact** | **Contact ID**, **Name** |
+| **Delete Contact** | **Contact ID** |
+| **Get LID by ID** | **Contact ID** |
+| **Get Phone Number by LID** | **Contact LID** (e.g. `123456789012345@lid`) |
+| **Check** | **Contact** — phone number to check (e.g. `447911123456`) |
 
 ---
 

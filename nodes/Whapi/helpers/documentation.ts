@@ -6,6 +6,13 @@ export const WHAPI_DOC_URLS = {
 		'https://support.whapi.cloud/help-desk/sending/send-video-audio-image-document',
 	checkContact:
 		'https://support.whapi.cloud/help-desk/faq/checking-if-the-number-has-whatsapp',
+	getContacts: 'https://whapi.readme.io/reference/getcontacts',
+	getContact: 'https://whapi.readme.io/reference/getcontact',
+	addContact: 'https://whapi.readme.io/reference/addcontact',
+	editContact: 'https://whapi.readme.io/reference/editcontact',
+	deleteContact: 'https://whapi.readme.io/reference/deletecontact',
+	getLidById: 'https://whapi.readme.io/reference/getlidbyid',
+	getPhoneByLid: 'https://whapi.readme.io/reference/getphonebylid',
 	getMessage:
 		'https://support.whapi.cloud/help-desk/receiving/http-api/retrieve-a-specific-users-chat-history',
 	messageResync:
