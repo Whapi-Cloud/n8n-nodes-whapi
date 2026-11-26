@@ -51,6 +51,7 @@ This package includes basic operations:
 - Send text and media message  
 - Get message by ID  
 - Check phone number  
+- Custom API call to any `https://gate.whapi.cloud/` endpoint  
 
 And events:
 
@@ -68,6 +69,16 @@ In the n8n node panel, each **Resource / Operation** includes links in the opera
 | Message | Send | Send text, image, video, audio, document, or contact to a phone number or chat ID |
 | Message | Get | Retrieve a message by ID |
 | Contact | Check | Check whether a phone number is registered on WhatsApp |
+| Custom API Call | Custom API Call | Authenticated HTTP request to a Whapi gate path (see [API reference](https://whapi.cloud/docs)) |
+
+#### Custom API Call
+
+| Parameter | Description |
+|-----------|-------------|
+| **Method** | `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` |
+| **Path** | Path without host (e.g. `chats`) or full URL starting with `https://gate.whapi.cloud/` |
+| **Query Parameters** | Optional name/value pairs |
+| **JSON Body** | Optional body for `POST`, `PUT`, and `PATCH` |
 
 #### Message → Send
 

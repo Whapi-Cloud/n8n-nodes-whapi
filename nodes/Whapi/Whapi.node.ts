@@ -9,6 +9,7 @@ import { WHAPI_ICON } from './constants';
 import { router } from './actions/router';
 import * as message from './actions/message/Message.resource';
 import * as contact from './actions/contact/Contact.resource';
+import * as customApi from './actions/custom/Custom.resource';
 
 export class Whapi implements INodeType {
 	description: INodeTypeDescription = {
@@ -63,11 +64,16 @@ export class Whapi implements INodeType {
 						name: 'Contact',
 						value: 'contact',
 					},
+					{
+						name: 'Custom API Call',
+						value: 'customApi',
+					},
 				],
 				default: 'message',
 			},
 			...message.description,
 			...contact.description,
+			...customApi.description,
 		],
 	};
 

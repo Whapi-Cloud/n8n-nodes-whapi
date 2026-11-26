@@ -29,6 +29,28 @@ export function getMethodEndpoint(method: string
 	return method.replace('-', '/')
 }
 
+const WHAPI_GATE_PREFIX = 'https://gate.whapi.cloud';
+
+/** Builds a full gate URL from a path segment or an already-qualified gate URL. */
+export function resolveWhapiGateUrl(pathOrUrl: string): string {
+	const trimmed = pathOrUrl.trim();
+	if (!trimmed) {
+		throw new Error('API path is empty');
+	}
+
+	if (/^https?:\/\//i.test(trimmed)) {
+		const withoutTrailingSlash = trimmed.replace(/\/+$/, '');
+		if (!withoutTrailingSlash.toLowerCase().startsWith(WHAPI_GATE_PREFIX)) {
+			throw new Error(
+				`URL must start with ${WHAPI_GATE_PREFIX}/. Only Whapi gate endpoints are allowed.`,
+			);
+		}
+		return trimmed;
+	}
+
+	return `${WHAPI_GATE_PREFIX}/${trimmed.replace(/^\/+/, '')}`;
+}
+
 
 export const createSimplifyFunction =
 	(includedFields: string[]) =>

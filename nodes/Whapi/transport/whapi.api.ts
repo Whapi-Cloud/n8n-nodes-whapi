@@ -23,6 +23,7 @@ export async function apiRequest(
 	query?: IDataObject,
 	url?: string,
 	option: IDataObject = {},
+	itemIndex = 0,
 ) {
 	query = query || {};
 
@@ -43,7 +44,7 @@ export async function apiRequest(
 		delete options.body;
 	}
 
-	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
+	const authenticationMethod = this.getNodeParameter('authentication', itemIndex) as string;
 	try {
 		const response = await this.helpers.httpRequestWithAuthentication.call(
 			this,
@@ -52,7 +53,7 @@ export async function apiRequest(
 		);
 		return response;
 	} catch (error) {
-		throw parseError(this.getNode(), error);
+		throw parseError(this.getNode(), error, itemIndex);
 	}
 }
 

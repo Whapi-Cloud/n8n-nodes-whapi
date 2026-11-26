@@ -157,7 +157,16 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 				processed.caption = additionalFields.caption;
 			}
 
-			const responseData = await apiRequest.call(this, 'POST', endpoint, processed);
+			const responseData = await apiRequest.call(
+				this,
+				'POST',
+				endpoint,
+				processed,
+				undefined,
+				undefined,
+				{},
+				i,
+			);
 			const executionData = this.helpers.constructExecutionMetaData(
 				this.helpers.returnJsonArray(responseData as IDataObject),
 				{ itemData: { item: i } },

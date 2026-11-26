@@ -44,7 +44,16 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			const id = this.getNodeParameter('messageID', i) as string;
 			const endpoint = `messages/${id}`;
 
-			const responseData = await apiRequest.call(this, 'GET', endpoint);
+			const responseData = await apiRequest.call(
+				this,
+				'GET',
+				endpoint,
+				{},
+				undefined,
+				undefined,
+				{},
+				i,
+			);
 			const executionData = this.helpers.constructExecutionMetaData(
 				this.helpers.returnJsonArray(responseData as IDataObject),
 				{ itemData: { item: i } },

@@ -5,6 +5,7 @@ import { parseError } from '../helpers/utils';
 
 import * as message from './message/Message.resource';
 import * as contact from './contact/Contact.resource';
+import * as customApi from './custom/Custom.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	let returnData: INodeExecutionData[][] = [];
@@ -24,6 +25,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				break;
 			case 'contact':
 				returnData = await contact[whapiNodeData.operation].execute.call(this);
+				break;
+			case 'customApi':
+				returnData = await customApi[whapiNodeData.operation].execute.call(this);
 				break;
 			default:
 				throw new NodeOperationError(

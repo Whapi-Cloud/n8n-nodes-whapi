@@ -40,10 +40,19 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		try {
 			const contact = this.getNodeParameter('contact', i);
 
-			const responseData = await apiRequest.call(this, 'POST', endpoint, {
-				blocking: 'wait',
-				contacts: [contact],
-			});
+			const responseData = await apiRequest.call(
+				this,
+				'POST',
+				endpoint,
+				{
+					blocking: 'wait',
+					contacts: [contact],
+				},
+				undefined,
+				undefined,
+				{},
+				i,
+			);
 			const executionData = this.helpers.constructExecutionMetaData(
 				this.helpers.returnJsonArray(responseData as IDataObject),
 				{ itemData: { item: i } },
