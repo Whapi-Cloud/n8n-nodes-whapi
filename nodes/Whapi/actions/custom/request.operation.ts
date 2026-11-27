@@ -149,12 +149,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			const requestMethod = this.getNodeParameter('requestMethod', i) as IHttpRequestMethods;
 			const apiPath = this.getNodeParameter('apiPath', i) as string;
 
-			let url: string;
-			try {
-				url = resolveWhapiGateUrl(apiPath);
-			} catch (error) {
-				throw new NodeOperationError(this.getNode(), (error as Error).message, { itemIndex: i });
-			}
+			const url = resolveWhapiGateUrl(apiPath, this.getNode(), i);
 
 			const query = buildQueryParameters.call(this, i);
 			const body = JSON_BODY_METHODS.has(requestMethod)

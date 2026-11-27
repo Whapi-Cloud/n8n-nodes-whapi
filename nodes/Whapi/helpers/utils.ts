@@ -1,4 +1,4 @@
-import { URL } from 'node:url';
+/// <reference lib="dom" />
 
 import {
 
@@ -34,60 +34,74 @@ export function getMethodEndpoint(method: string
 const WHAPI_GATE_HOST = 'gate.whapi.cloud';
 const WHAPI_GATE_ORIGIN = `https://${WHAPI_GATE_HOST}`;
 
-function parseWhapiGateAbsoluteUrl(raw: string): string {
+function parseWhapiGateAbsoluteUrl(raw: string, node: INode, itemIndex?: number): string {
 	let parsed: URL;
 	try {
 		parsed = new URL(raw);
 	} catch {
-		throw new Error('Path is not a valid URL');
+		throw new NodeOperationError(node, 'Path is not a valid URL', { itemIndex });
 	}
 
 	if (parsed.protocol !== 'https:') {
-		throw new Error(`Only HTTPS requests to ${WHAPI_GATE_HOST} are allowed`);
+		throw new NodeOperationError(
+			node,
+			`Only HTTPS requests to ${WHAPI_GATE_HOST} are allowed`,
+			{ itemIndex },
+		);
 	}
 
 	if (parsed.hostname.toLowerCase() !== WHAPI_GATE_HOST) {
-		throw new Error(`URL host must be exactly ${WHAPI_GATE_HOST}`);
+		throw new NodeOperationError(node, `URL host must be exactly ${WHAPI_GATE_HOST}`, {
+			itemIndex,
+		});
 	}
 
 	if (parsed.username || parsed.password) {
-		throw new Error('URL must not include username or password');
+		throw new NodeOperationError(node, 'URL must not include username or password', {
+			itemIndex,
+		});
 	}
 
 	if (parsed.port !== '') {
-		throw new Error('URL must not include a custom port');
+		throw new NodeOperationError(node, 'URL must not include a custom port', { itemIndex });
 	}
 
 	return parsed.href;
 }
 
-function resolveRelativeWhapiPath(path: string): string {
+function resolveRelativeWhapiPath(path: string, node: INode, itemIndex?: number): string {
 	if (path.includes('://') || path.includes('@') || path.includes('\\')) {
-		throw new Error(
+		throw new NodeOperationError(
+			node,
 			'Use a relative gate path (e.g. chats) or a full https://gate.whapi.cloud/… URL without @ or backslashes',
+			{ itemIndex },
 		);
 	}
 
 	const relative = path.replace(/^\/+/, '');
 	if (!relative) {
-		throw new Error('API path is empty');
+		throw new NodeOperationError(node, 'API path is empty', { itemIndex });
 	}
 
 	return `${WHAPI_GATE_ORIGIN}/${relative}`;
 }
 
 /** Builds a full gate URL from a path segment or an already-qualified gate URL. */
-export function resolveWhapiGateUrl(pathOrUrl: string): string {
+export function resolveWhapiGateUrl(
+	pathOrUrl: string,
+	node: INode,
+	itemIndex?: number,
+): string {
 	const trimmed = pathOrUrl.trim();
 	if (!trimmed) {
-		throw new Error('API path is empty');
+		throw new NodeOperationError(node, 'API path is empty', { itemIndex });
 	}
 
 	if (/^https?:\/\//i.test(trimmed)) {
-		return parseWhapiGateAbsoluteUrl(trimmed);
+		return parseWhapiGateAbsoluteUrl(trimmed, node, itemIndex);
 	}
 
-	return resolveRelativeWhapiPath(trimmed);
+	return resolveRelativeWhapiPath(trimmed, node, itemIndex);
 }
 
 
