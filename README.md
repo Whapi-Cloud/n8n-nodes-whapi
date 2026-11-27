@@ -83,7 +83,7 @@ In the n8n node panel, each **Resource / Operation** includes links in the opera
 | Parameter | Description |
 |-----------|-------------|
 | **Method** | `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` |
-| **Path** | Path without host (e.g. `chats`) or full URL starting with `https://gate.whapi.cloud/` |
+| **Path** | Relative gate path (e.g. `chats`) or full `https://gate.whapi.cloud/…` URL (exact host only; no credentials or custom port) |
 | **Query Parameters** | Optional name/value pairs |
 | **JSON Body** | Optional body for `POST`, `PUT`, and `PATCH` |
 

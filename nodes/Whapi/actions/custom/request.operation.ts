@@ -41,7 +41,7 @@ const properties: INodeProperties[] = [
 		default: '',
 		placeholder: 'e.g. chats or messages/MESSAGE_ID',
 		description:
-			'Path on the Whapi gate, without the host. Example: <code>chats</code> calls <code>https://gate.whapi.cloud/chats</code>. You may paste a full URL only if it starts with <code>https://gate.whapi.cloud/</code>.',
+			'Path on the Whapi gate, without the host. Example: <code>chats</code> calls <code>https://gate.whapi.cloud/chats</code>. A full URL is accepted only when it is <code>https://gate.whapi.cloud/…</code> (exact host, no credentials or custom port).',
 	},
 	{
 		displayName: 'Query Parameters',

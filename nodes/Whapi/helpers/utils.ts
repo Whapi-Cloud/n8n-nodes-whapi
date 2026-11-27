@@ -1,3 +1,5 @@
+import { URL } from 'node:url';
+
 import {
 
 	IDataObject,
@@ -29,7 +31,50 @@ export function getMethodEndpoint(method: string
 	return method.replace('-', '/')
 }
 
-const WHAPI_GATE_PREFIX = 'https://gate.whapi.cloud';
+const WHAPI_GATE_HOST = 'gate.whapi.cloud';
+const WHAPI_GATE_ORIGIN = `https://${WHAPI_GATE_HOST}`;
+
+function parseWhapiGateAbsoluteUrl(raw: string): string {
+	let parsed: URL;
+	try {
+		parsed = new URL(raw);
+	} catch {
+		throw new Error('Path is not a valid URL');
+	}
+
+	if (parsed.protocol !== 'https:') {
+		throw new Error(`Only HTTPS requests to ${WHAPI_GATE_HOST} are allowed`);
+	}
+
+	if (parsed.hostname.toLowerCase() !== WHAPI_GATE_HOST) {
+		throw new Error(`URL host must be exactly ${WHAPI_GATE_HOST}`);
+	}
+
+	if (parsed.username || parsed.password) {
+		throw new Error('URL must not include username or password');
+	}
+
+	if (parsed.port !== '') {
+		throw new Error('URL must not include a custom port');
+	}
+
+	return parsed.href;
+}
+
+function resolveRelativeWhapiPath(path: string): string {
+	if (path.includes('://') || path.includes('@') || path.includes('\\')) {
+		throw new Error(
+			'Use a relative gate path (e.g. chats) or a full https://gate.whapi.cloud/… URL without @ or backslashes',
+		);
+	}
+
+	const relative = path.replace(/^\/+/, '');
+	if (!relative) {
+		throw new Error('API path is empty');
+	}
+
+	return `${WHAPI_GATE_ORIGIN}/${relative}`;
+}
 
 /** Builds a full gate URL from a path segment or an already-qualified gate URL. */
 export function resolveWhapiGateUrl(pathOrUrl: string): string {
@@ -39,16 +84,10 @@ export function resolveWhapiGateUrl(pathOrUrl: string): string {
 	}
 
 	if (/^https?:\/\//i.test(trimmed)) {
-		const withoutTrailingSlash = trimmed.replace(/\/+$/, '');
-		if (!withoutTrailingSlash.toLowerCase().startsWith(WHAPI_GATE_PREFIX)) {
-			throw new Error(
-				`URL must start with ${WHAPI_GATE_PREFIX}/. Only Whapi gate endpoints are allowed.`,
-			);
-		}
-		return trimmed;
+		return parseWhapiGateAbsoluteUrl(trimmed);
 	}
 
-	return `${WHAPI_GATE_PREFIX}/${trimmed.replace(/^\/+/, '')}`;
+	return resolveRelativeWhapiPath(trimmed);
 }
 
 
